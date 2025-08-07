@@ -13,6 +13,8 @@
     "@hookform/resolvers": "^5.2.1",
     "@monaco-editor/react": "^4.7.0",
     "@xterm/xterm": "^5.5.0",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
     "monaco-editor": "^0.52.2",
     "react": "^19.1.0",
     "react-arborist": "^3.4.3",

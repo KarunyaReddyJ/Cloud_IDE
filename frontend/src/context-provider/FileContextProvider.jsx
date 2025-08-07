@@ -16,7 +16,7 @@ const FileContextProvider = ({ children }) => {
   useEffect(() => {
     const fetchFiles = async () => {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/files");
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/files`);
       const parsedResponse = await response.json();
       console.log(parsedResponse.fsTree);
       setFileTree(parsedResponse.fsTree || []);
@@ -113,7 +113,7 @@ const FileContextProvider = ({ children }) => {
     const getCode = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/file/content?path=${path}`
+          `${import.meta.env.VITE_BACKEND_URL}/file/content?path=${path}`
         );
         const parsedData = await response.json();
         const content = parsedData.content;

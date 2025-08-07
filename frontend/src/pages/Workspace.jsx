@@ -3,7 +3,7 @@ import FileViewer from "../components/FileViewer";
 import CodeEditor from "../components/CodeEditor";
 import useFileContext from "../hooks/useFileContext";
 import Tab from "../components/mini-components/Tab";
-const Layout = () => {
+const Workspace = () => {
   const { fileTabs, removeTab, activeTab } = useFileContext();
   return (
     <div>
@@ -30,4 +30,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default Workspace;

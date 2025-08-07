@@ -1,17 +1,32 @@
 import "./App.css";
+import {lazy,Suspense} from 'react'
 import FileContextProvider from "./context-provider/FileContextProvider";
 import SocketProvider from "./context-provider/SocketContextProvider";
-import Layout from "./pages/Layout";
+import AuthProvider from "./context-provider/AuthContextProvider";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+const Workspace=lazy(()=>import("./pages/Workspace"))
+const Home=lazy(()=>import("./pages/Home"))
+
 
 function App() {
   return (
-    <>
-      <SocketProvider>
-        <FileContextProvider>
-          <Layout />
-        </FileContextProvider>
-      </SocketProvider>
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <SocketProvider>
+          <FileContextProvider>
+            <Routes>
+              <Route path="/" element={<ProtectedRoute> <Home /> </ProtectedRoute>}/>
+              <Route  path="/editor/:id" element={ <ProtectedRoute>  <Workspace /> </ProtectedRoute>}/>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+            </Routes>
+          </FileContextProvider>
+        </SocketProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 import SocketContext from "../context/SocketContext";
 
-const socket = io("http://localhost:3000");
+const socket = io(import.meta.env.VITE_BACKEND_URL);
 
 const SocketProvider = ({ children }) => {
   const value = useMemo(() => socket, []);

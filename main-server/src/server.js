@@ -3,15 +3,24 @@ const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/auth');
 const dockerClient = require('./utils/Docker');
-const authMiddleware = require('./middleware/authMiddleware');
-
+const workspaceRoutes = require('./routes/workspace');
+const runtimeRoutes = require('./routes/runtime');
+const cors = require('cors')
+const morgan = require('morgan');
+const loggerMiddleware = require('./middleware/logger');
 const app = express();
 app.use(express.json());
-
+app.use(morgan('dev'));
+app.use(loggerMiddleware);
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}))
 app.use('/api/auth', authRoutes);
-
+app.use('/api/workspace', workspaceRoutes);
+app.use('/api/runtime', runtimeRoutes);
 // Test Docker SDK: List all containers
-app.get('/api/docker/containers',async (req, res) => {
+app.get('/api/docker/containers', async (req, res) => {
   try {
     const containers = await dockerClient.listContainers({ all: true });
     res.json(containers);
