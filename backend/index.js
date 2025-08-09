@@ -3,11 +3,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const os = require('os');
 const pty = require('node-pty');
-const path=require('path');
+const path = require('path');
 const { readFs } = require('./src/utils/readFs');
 const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
-const cors=require('cors')
+const cors = require('cors')
 const chokidar = require('chokidar')
+const logger = require('./src/middlewares/logger')
 
 const fs = require('fs').promises;
 
@@ -24,28 +25,28 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // adjust for production
+    origin: '*',
     methods: ['GET', 'POST']
   }
 });
 
 app.use(cors({
-    origin:'*'
+  origin: '*'
 }))
-
+app.use(logger)
 app.get('/', (req, res) => {
   res.send('hello');
 });
 
-app.get('/files',async(req,res)=>{
-    const startPath=process.env.INIT_CWD
-    const fsTree=await readFs(path.join(startPath,'user'),'user')  
-    return res.status(201).json({fsTree:fsTree.children})
+app.get('/files', async (req, res) => {
+  const startPath = process.env.INIT_CWD
+  const fsTree = await readFs(path.join(startPath, 'user'), 'user')
+  return res.status(201).json({ fsTree: fsTree.children })
 })
 
-app.get('/file/content', async (req, res) => {
-  
-  const requestedPath = req.query.path?.replace(/^\/+/, ''); // remove leading slashes
+app.get('/file', async (req, res) => {
+
+  const requestedPath = req.query.name?.replace(/^\/+/, ''); // remove leading slashes
 
   if (!requestedPath) return res.status(400).send("Missing 'path' query param");
 
@@ -59,7 +60,7 @@ app.get('/file/content', async (req, res) => {
 
   try {
     const content = await fs.readFile(fullPath, 'utf-8');
-    console.log('content',content)
+    console.log('content', content)
     res.send({ content });
   } catch (err) {
     console.error(err);
@@ -74,7 +75,7 @@ chokidar
     persistent: true
   })
   .on('all', (event, path) => {
-    io.emit('file:refresh',path)
+    io.emit('file:refresh', path)
     console.log('chokidar:', event, path);
   });
 
@@ -88,41 +89,41 @@ ptyProcess.onData((data) => {
 // 🔥 All event listeners go inside connection callback
 io.on('connection', (socket) => {
   console.log(`✅ Socket connected: ${socket.id}`);
-    ptyProcess.write('clear\r');
+  ptyProcess.write('clear\r');
   socket.on('terminal:write', (data) => {
     console.log('✍️ Terminal input received:', data);
     ptyProcess.write(data);
   });
- 
-socket.on('file:write', async (data) => {
-  console.log(data)
-  try {
-  const { path: relativePath, content }=data
-  console.log('entered event',{ path: relativePath, content })
-  const requestedPath = relativePath?.replace(/^\/+/, ''); 
 
-  // Defensive check
-  if (!requestedPath) {
-    socket.emit('file:error', { message: "Missing 'path' in payload" });
-    return;
-  }
+  socket.on('file:write', async (data) => {
+    console.log(data)
+    try {
+      const { path: relativePath, content } = data
+      console.log('entered event', { path: relativePath, content })
+      const requestedPath = relativePath?.replace(/^\/+/, '');
 
-  // Security check: prevent path traversal
-  const baseDir = path.resolve('./user');
-  const fullPath = path.resolve(baseDir, requestedPath);
+      // Defensive check
+      if (!requestedPath) {
+        socket.emit('file:error', { message: "Missing 'path' in payload" });
+        return;
+      }
 
-  if (!fullPath.startsWith(baseDir)) {
-    socket.emit('file:error', { message: "Access denied" });
-    return;
-  }
+      // Security check: prevent path traversal
+      const baseDir = path.resolve('./user');
+      const fullPath = path.resolve(baseDir, requestedPath);
 
-    await fs.writeFile(fullPath, content, 'utf-8');
-    socket.emit('file:write:success', { path: relativePath });
-  } catch (err) {
-    console.error(err);
-    socket.emit('file:error', { message: "Failed to write file", error: err.message });
-  }
-})
+      if (!fullPath.startsWith(baseDir)) {
+        socket.emit('file:error', { message: "Access denied" });
+        return;
+      }
+
+      await fs.writeFile(fullPath, content, 'utf-8');
+      socket.emit('file:write:success', { path: relativePath });
+    } catch (err) {
+      console.error(err);
+      socket.emit('file:error', { message: "Failed to write file", error: err.message });
+    }
+  })
   socket.on('disconnect', () => {
     console.log(`❌ Socket disconnected: ${socket.id}`);
   });
@@ -132,3 +133,4 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`🚀 Server listening on port ${PORT}`);
 });
+

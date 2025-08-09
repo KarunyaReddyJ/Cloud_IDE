@@ -8,7 +8,7 @@ function adminMiddleware(req, res, next) {
             next();
         return res.status(401).json({ message: "Only admins allowed" })
     } catch (err) {
-        return res.status(401).json({ error: 'Invalid token' });
+       return res.status(401).json({ error: 'Invalid token',message:err.message });
     }
 }
 

@@ -6,13 +6,17 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; // e.g., http://localhost:
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("auth-user");
-    return stored ? JSON.parse(stored) : null;
+  const [userData, setUserData] = useState(() => {
+    const user = localStorage.getItem("auth-user");
+    const token = localStorage.getItem("auth-token");
+    return user && token ? { user: JSON.parse(user), token } : null;
   });
+
+  const [loading, setLoading] = useState(false);
 
   const login = async (email, password) => {
     try {
+      setLoading(true);
       const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: {
@@ -24,12 +28,14 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error("Login failed");
 
       const data = await res.json(); // expected: { user, token }
-
-      setUser(data.user);
+      console.log("logged", data);
+      setUserData(data);
+      setLoading(false);
       localStorage.setItem("auth-user", JSON.stringify(data.user));
       localStorage.setItem("auth-token", data.token);
       navigate("/");
     } catch (err) {
+      setLoading(false);
       alert("Login error: " + err.message);
     }
   };
@@ -48,7 +54,7 @@ export const AuthProvider = ({ children }) => {
 
       const data = await res.json(); // expected: { user, token }
 
-      setUser(data.user);
+      setUserData(data);
       localStorage.setItem("auth-user", JSON.stringify(data.user));
       localStorage.setItem("auth-token", data.token);
       navigate("/");
@@ -58,14 +64,26 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);
+    setUserData(null);
     localStorage.removeItem("auth-user");
     localStorage.removeItem("auth-token");
     navigate("/login");
   };
 
+  const authFetch = (endpoint, options = {}) => {
+    return fetch(`${BACKEND_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${userData?.token}`,
+        "Content-Type": "application/json",
+      },
+    });
+  };
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider
+      value={{ loading, userData, login, signup, logout, authFetch }}
+    >
       {children}
     </AuthContext.Provider>
   );

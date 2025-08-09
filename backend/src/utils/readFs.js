@@ -2,6 +2,11 @@
 const fs = require('fs').promises;
 const path = require('path');
 
+
+
+
+
+
 const readFs = async (m_path,name) => {
   const stats = await fs.lstat(m_path);
   const obj = {

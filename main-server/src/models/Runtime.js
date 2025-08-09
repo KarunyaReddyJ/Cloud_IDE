@@ -15,12 +15,12 @@ const runtimeSchema = new mongoose.Schema({
     required: true
   },
   exec: {
-    type: [String], // ✅ make it an array of strings
-    required: true
+    type: [String], 
+   
   },
   dockerfileTemplate: {
     type: String,
-    required: true
+   
   }
 });
 

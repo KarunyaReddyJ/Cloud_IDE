@@ -9,7 +9,7 @@ const FileContextProvider = ({ children }) => {
   const [fileTree, setFileTree] = useState([]);
   const [loading, setLoading] = useState(false);
   const { socket, loading: socketLoading } = useSocket();
-  console.log("socker", socket);
+ // console.log("socker", socket);
   const initiateFileFetch = () => setFetchFiles(true);
   const markFileUptoDate = () => setFetchFiles(false);
   const [code, setcode] = useState("");

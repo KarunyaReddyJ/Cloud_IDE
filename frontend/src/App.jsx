@@ -19,7 +19,7 @@ function App() {
           <FileContextProvider>
             <Routes>
               <Route path="/" element={<ProtectedRoute> <Home /> </ProtectedRoute>}/>
-              <Route  path="/editor/:id" element={ <ProtectedRoute>  <Workspace /> </ProtectedRoute>}/>
+              <Route  path="/workspace/:id" element={ <ProtectedRoute>  <Workspace /> </ProtectedRoute>}/>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
             </Routes>
