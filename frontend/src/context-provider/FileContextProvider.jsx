@@ -1,22 +1,26 @@
 import { useState, useEffect } from "react";
 import FileContext from "../context/FileContext";
 import useSocket from "../hooks/useSocket";
-
+import useAuth from "../hooks/useAuth";
 const FileContextProvider = ({ children }) => {
   const [fetchFiles, setFetchFiles] = useState(true);
   const [fileTabs, setFileTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [fileTree, setFileTree] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [workspaceId, setWorkspaceId] = useState(null);
   const { socket, loading: socketLoading } = useSocket();
- // console.log("socker", socket);
+  const {authFetch}=useAuth()
+
   const initiateFileFetch = () => setFetchFiles(true);
   const markFileUptoDate = () => setFetchFiles(false);
   const [code, setcode] = useState("");
   useEffect(() => {
-    const fetchFiles = async () => {
+    const FetchFiles = async () => {
+      console.log({workspaceId})
+      if(workspaceId===null) return
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/files`);
+      const response = await authFetch(`/api/workspace/${workspaceId}/files`);
       const parsedResponse = await response.json();
       console.log(parsedResponse.fsTree);
       setFileTree(parsedResponse.fsTree || []);
@@ -24,10 +28,10 @@ const FileContextProvider = ({ children }) => {
       setLoading(false);
     };
     if (fetchFiles) {
-      fetchFiles();
+      FetchFiles();
       setFetchFiles(false);
     }
-  }, [fetchFiles]);
+  }, [fetchFiles, workspaceId]);
 
   useEffect(() => {
     try {
@@ -111,17 +115,15 @@ const FileContextProvider = ({ children }) => {
     if (!activeTab) return;
     const path = activeTab.path;
     const getCode = async () => {
+      if(!workspaceId) return
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_URL}/file/content?path=${path}`
-        );
+        const response = await authFetch(`/api/workspace/${workspaceId}/file?name=${path}`);
         const parsedData = await response.json();
         const content = parsedData.content;
         setcode(content);
       } catch (error) {
         console.error(
-          "error while fetching code of ",
-
+          "error while fetching content of ",
           path,
           error.message
         );
@@ -129,7 +131,7 @@ const FileContextProvider = ({ children }) => {
     };
     getCode();
     return () => {};
-  }, [activeTab]);
+  }, [activeTab, authFetch, workspaceId]);
 
   return (
     <FileContext.Provider
@@ -146,6 +148,8 @@ const FileContextProvider = ({ children }) => {
         code,
         setcode,
         activeTab,
+        setWorkspaceId,
+        workspaceId
       }}
     >
       {children}

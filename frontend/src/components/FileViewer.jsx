@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import useFileContext from "../hooks/useFileContext";
 
-// Simple file extension to emoji mapping
 const fileIcons = {
   js: "🟨",
   jsx: "🟦",
@@ -24,107 +23,56 @@ function getFileIcon(name) {
 }
 
 const FileViewer = () => {
-  const { fileTree, loading } = useFileContext();
+  const {workspaceId, fileTree, loading } = useFileContext();
   const [contextMenu, setContextMenu] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
-  // Context menu actions
+  useEffect(() => {
+    console.log('mounted fileviewer',workspaceId,loading)
+    return () => {
+      
+    };
+  }, []);
   const handleMenuAction = (action) => {
     if (!selectedNode) return;
-    // Implement your logic for rename, delete, new file/folder here
     alert(`${action} on ${selectedNode.name}`);
     setContextMenu(null);
   };
 
-  // Render context menu
-  const renderContextMenu = () => {
-    if (!contextMenu) return null;
-    return (
+  const renderContextMenu = () =>
+    contextMenu && (
       <div
-        style={{
-          position: "fixed",
-          top: contextMenu.y,
-          left: contextMenu.x,
-          background: "#fff",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          zIndex: 1000,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-        }}
+        className="context-menu"
+        style={{ top: contextMenu.y, left: contextMenu.x }}
       >
-        <div
-          style={{ padding: "6px 12px", cursor: "pointer" }}
-          onClick={() => handleMenuAction("Rename")}
-        >
-          Rename
-        </div>
-        <div
-          style={{ padding: "6px 12px", cursor: "pointer" }}
-          onClick={() => handleMenuAction("Delete")}
-        >
-          Delete
-        </div>
-        <div
-          style={{ padding: "6px 12px", cursor: "pointer" }}
-          onClick={() => handleMenuAction("New File")}
-        >
-          New File
-        </div>
-        <div
-          style={{ padding: "6px 12px", cursor: "pointer" }}
-          onClick={() => handleMenuAction("New Folder")}
-        >
-          New Folder
-        </div>
+        {["Rename", "Delete", "New File", "New Folder"].map((item) => (
+          <div
+            key={item}
+            className="context-menu-item"
+            onClick={() => handleMenuAction(item)}
+          >
+            {item}
+          </div>
+        ))}
       </div>
     );
-  };
 
   if (loading) {
     return (
-      <div style={{ padding: "10px" }}>
+      <div className="fileviewer-loading">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              height: "20px",
-              width: `${80 + Math.random() * 60}px`,
-              backgroundColor: "#e0e0e0",
-              margin: "8px 0",
-              borderRadius: "4px",
-              animation: "pulse 1.2s infinite ease-in-out",
-            }}
-          />
+          <div key={i} className="loading-line" />
         ))}
-        <style>
-          {`
-            @keyframes pulse {
-              0% { background-color: #e0e0e0; }
-              50% { background-color: #f0f0f0; }
-              100% { background-color: #e0e0e0; }
-            }
-          `}
-        </style>
       </div>
     );
   }
 
   return (
     <div
-      style={{
-        width: "260px",
-        height: "100%",
-        overflowY: "auto",
-        backgroundColor: "#f8f8fa",
-        padding: "10px",
-        boxSizing: "border-box",
-        fontFamily: "monospace",
-        fontSize: "14px",
-        borderRight: "1px solid #e0e0e0",
-        position: "relative",
-      }}
+      className="fileviewer"
       onClick={() => setContextMenu(null)}
     >
+        { console.log(fileTree) }
       {fileTree?.map((fileNode) => (
         <RecursiveComponent
           key={fileNode.id}
@@ -144,10 +92,9 @@ const RecursiveComponent = ({ node, setContextMenu, setSelectedNode }) => {
   const { addTab } = useFileContext();
   const [opened, setOpened] = useState(false);
   const { name, id, children = [], isDir } = node;
-  const path = id?.split("/usr/src/app/user/")[1] || "path";
+  const path = id?.split("/app/user/")[1] || "path";
   const fullPath = path === "" ? name : path;
 
-  // Right-click context menu
   const handleContextMenu = (e) => {
     e.preventDefault();
     setSelectedNode(node);
@@ -164,29 +111,21 @@ const RecursiveComponent = ({ node, setContextMenu, setSelectedNode }) => {
   };
 
   return (
-    <div style={{ marginLeft: "10px" }}>
+    <div className="file-node">
+    
       <div
+        className={`file-item ${isDir ? "dir" : "file"}`}
         onClick={handleClick}
         onContextMenu={handleContextMenu}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          cursor: "pointer",
-          backgroundColor: isDir ? "#eaf6ff" : "#fffbe6",
-          padding: "2px 6px",
-          borderRadius: "4px",
-          margin: "2px 0",
-          transition: "background 0.2s",
-        }}
       >
-        <span style={{ marginRight: "6px" }}>
+        <span className="file-icon">
           {isDir ? (opened ? "📂" : "📁") : getFileIcon(name)}
         </span>
         <span>{name}</span>
       </div>
 
       {opened && isDir && (
-        <div style={{ marginLeft: "10px" }}>
+        <div className="file-children">
           {children.map((child) => (
             <RecursiveComponent
               key={child.id}

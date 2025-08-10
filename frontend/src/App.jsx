@@ -1,5 +1,5 @@
 import "./App.css";
-import {lazy,Suspense} from 'react'
+import {lazy} from 'react'
 import FileContextProvider from "./context-provider/FileContextProvider";
 import SocketProvider from "./context-provider/SocketContextProvider";
 import AuthProvider from "./context-provider/AuthContextProvider";

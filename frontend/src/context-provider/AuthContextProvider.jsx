@@ -71,6 +71,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authFetch = (endpoint, options = {}) => {
+    console.info(`making req to ${BACKEND_URL}${endpoint}`)
     return fetch(`${BACKEND_URL}${endpoint}`, {
       ...options,
       headers: {

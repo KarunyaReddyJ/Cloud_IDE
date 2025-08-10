@@ -6,20 +6,48 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) return alert("Fill all fields");
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
     signup(email, password);
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Sign Up</button>
-      </form>
+    <div className="container">
+      <h1>Sign Up</h1>
+
+      <div className="auth-section">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="primary-btn">
+            Sign Up
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

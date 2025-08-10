@@ -5,22 +5,49 @@ const Login = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-
-  const handleSubmit = e => {
+  
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) return alert("Fill all fields");
+    if (!email || !password) {
+      alert("Please fill in all fields.");
+      return;
+    }
     login(email, password);
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} />
-        <input type="password" placeholder="Password"  autocomplete="current-password" onChange={e => setPassword(e.target.value)} />
-        <button type="submit">Log In</button>
-      </form>
+    <div className="container">
+      <h1>Login</h1>
+
+      <div className="auth-section">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              autoComplete="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="primary-btn">
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

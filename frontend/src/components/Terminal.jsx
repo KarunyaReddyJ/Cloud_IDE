@@ -17,7 +17,6 @@ const TerminalComponent = () => {
     })
 
     socket.on('terminal:data',(data)=>{
-     
       terminal.write(data)
     })
     return ()=>{

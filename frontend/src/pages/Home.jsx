@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
+import useFileContext from "../hooks/useFileContext";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [languages, setLanguages] = useState([]);
   const [workspaces, setWorkspaces] = useState([]);
-
   const [workspaceName, setWorkspaceName] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [creating, setCreating] = useState(false);
 
   const { loading, authFetch } = useAuth();
+  const {setWorkspaceId}= useFileContext()
+  const navigate = useNavigate();
 
   // Fetch runtimes
   useEffect(() => {
@@ -83,6 +86,11 @@ const Home = () => {
     }
   };
 
+  const handleViewWorkspace = (id) => {
+    setWorkspaceId(id)
+    navigate(`/workspace/${id}`);
+  };
+
   return (
     <div className="container">
       <h1>Dashboard</h1>
@@ -131,9 +139,12 @@ const Home = () => {
                   <td>{ws.language}</td>
                   <td>{new Date(ws.createdAt).toLocaleString()}</td>
                   <td>
-                    <a href={`/workspace/${ws.id}`} className="view-btn">
+                    <button
+                      className="view-btn"
+                      onClick={() => handleViewWorkspace(ws.id)}
+                    >
                       View
-                    </a>
+                    </button>
                     <button
                       className="delete-btn"
                       onClick={() => handleDeleteWorkspace(ws.id)}

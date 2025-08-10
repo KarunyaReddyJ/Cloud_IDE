@@ -73,3 +73,158 @@ h1 {
   border-radius: 4px;
   cursor: pointer;
 }
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.auth-section {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.auth-form .form-group {
+  margin-bottom: 15px;
+}
+
+.auth-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.primary-btn {
+  background-color: #4cafef;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background-color: #3a9ed9;
+}
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: lavender;
+  padding: 5px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 120px;
+  gap: 10px;
+}
+
+.tab-name {
+  margin: 0;
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+.tab-close {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 10px;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.tab-close:hover {
+  color: red;
+}
+
+
+.fileviewer {
+  width: 260px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: #f8f8fa;
+  padding: 10px;
+  box-sizing: border-box;
+  font-family: monospace;
+  font-size: 14px;
+  border-right: 1px solid #e0e0e0;
+  position: relative;
+}
+
+/* Loading skeleton */
+.fileviewer-loading .loading-line {
+  height: 20px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+  border-radius: 4px;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { background-color: #e0e0e0; }
+  50% { background-color: #f0f0f0; }
+  100% { background-color: #e0e0e0; }
+}
+
+/* File tree */
+.file-node {
+  margin-left: 10px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 2px 0;
+  transition: background 0.2s;
+}
+
+.file-item.dir {
+  background-color: #eaf6ff;
+}
+
+.file-item.file {
+  background-color: #fffbe6;
+}
+
+.file-item:hover {
+  background-color: #dceffd;
+}
+
+.file-icon {
+  margin-right: 6px;
+}
+
+/* Nested children */
+.file-children {
+  margin-left: 10px;
+}
+
+/* Context menu */
+.context-menu {
+  position: fixed;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.context-menu-item:hover {
+  background-color: #e6f2ff;
+}
