@@ -1,20 +1,25 @@
 import Editor from "@monaco-editor/react";
-import useFileContext from "../hooks/useFileContext";
+import useFileTabsContext from "../hooks/useFileTabsContext";
 
 const CodeEditor = () => {
-  const { code, setcode, activeTab,loading } = useFileContext();
-
+  
+  const {
+    code,
+    setCode,
+    activeTab,
+    loading: fileTreeLoading,
+  } = useFileTabsContext();
   const handleEditorDidMount = (editor, monaco) => {
     console.log("Editor mounted:", editor);
     editor.focus();
   };
 
   const handleEditorChange = (value) => {
-    setcode(value);
+    setCode(value);
     console.log("Editor content changed:", value);
   };
   const getLanguageByExtension = () => {
-    console.log('enetered ',activeTab)
+    console.log("enetered ", activeTab);
     if (!activeTab?.name) return "plaintext";
     const ext = activeTab.name.split(".").pop();
     console.log("ext", ext);
@@ -38,17 +43,22 @@ const CodeEditor = () => {
     );
   };
   console.log("getLanguageByExtension", getLanguageByExtension());
+  if (fileTreeLoading) {
+    return <>Loadiing</>;
+  }
   return (
     <div>
+      {console.log("code: ", code)}
       <Editor
         height="70vh"
         width="70vw"
         language={getLanguageByExtension()}
-        value={code}
+        value={activeTab ? code : ""}
         theme="vs-dark"
         onMount={handleEditorDidMount}
-        onChange={handleEditorChange}
+        onChange={activeTab ? handleEditorChange : undefined}
         options={{
+          readOnly: !activeTab,
           selectOnLineNumbers: true,
           minimap: { enabled: true },
         }}

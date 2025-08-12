@@ -1,23 +1,14 @@
 
 services:
-  embedded_server:
-    build: ./backend
-    container_name: embedded_server
-    volumes:
-      - ./backend:/usr/src/app
-    environment:
-      - NODE_ENV=development
-      - PORT=3000
-    restart: unless-stopped
-    networks:
-      - cloud_ide_net
-
-  proxy:
-    build: ./reverse-proxy
-    container_name: container_proxy
+  main_server:
+    build: ./main-server
+    container_name: main_server
     ports:
-      - "4000:80"
+      - "3000:3000"
     restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./main-server:/usr/src/app
     networks:
       - cloud_ide_net
 

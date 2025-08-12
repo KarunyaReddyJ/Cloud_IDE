@@ -3,7 +3,6 @@ const dockerClient = require('../utils/Docker');
 const workspaceProxy = require('../utils/Proxy');
 const crypto = require('crypto');
 const Runtime = require('../models/Runtime');
-const { create } = require('../models/User');
 
 exports.createWorkspace = async (req, res) => {
   const { language, name } = req.body;
@@ -14,7 +13,7 @@ exports.createWorkspace = async (req, res) => {
   if (!runtime) return res.status(400).json({ error: 'Unsupported language' });
   const imageNameFromDB = runtime.image
   let imageName = imageNameFromDB.replace(/[^\x20-\x7E]/g, '').trim();
-  ;
+  
   if (!imageName.includes(':')) {
     imageName += ':latest';
   }
@@ -54,7 +53,7 @@ exports.createWorkspace = async (req, res) => {
     Tty: true,
     HostConfig: {
       NetworkMode: 'cloud_ide_net',
-      Memory: 64 * 1024 * 1024,
+      Memory: 256 * 1024 * 1024,
       CpuPeriod: 100000,
       CpuQuota: 50000
     }

@@ -1,6 +1,7 @@
 import { useState,useEffect } from "react";
 import useFileContext from "../hooks/useFileContext";
-
+import useWorkspaceMetaContext from '../hooks/useWorkspaceMeta'
+import useFileTabsContext from "../hooks/useFileTabsContext";
 const fileIcons = {
   js: "🟨",
   jsx: "🟦",
@@ -23,7 +24,8 @@ function getFileIcon(name) {
 }
 
 const FileViewer = () => {
-  const {workspaceId, fileTree, loading } = useFileContext();
+  const { fileTree, loading } = useFileContext();
+  const {workspaceId} = useWorkspaceMetaContext()
   const [contextMenu, setContextMenu] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
@@ -89,7 +91,7 @@ const FileViewer = () => {
 export default FileViewer;
 
 const RecursiveComponent = ({ node, setContextMenu, setSelectedNode }) => {
-  const { addTab } = useFileContext();
+  const { addTab } = useFileTabsContext();
   const [opened, setOpened] = useState(false);
   const { name, id, children = [], isDir } = node;
   const path = id?.split("/app/user/")[1] || "path";

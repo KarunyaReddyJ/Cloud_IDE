@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// router.use(adminMiddleware)
+router.use(adminMiddleware)
 
 router.post('/', async (req, res) => {
     try {

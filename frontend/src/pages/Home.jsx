@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import useFileContext from "../hooks/useFileContext";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -11,9 +10,14 @@ const Home = () => {
   const [creating, setCreating] = useState(false);
 
   const { loading, authFetch } = useAuth();
-  const {setWorkspaceId}= useFileContext()
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log("loaded");
+    return () => {
+      console.log("unloading");
+    };
+  }, []);
   // Fetch runtimes
   useEffect(() => {
     const getLanguages = async () => {
@@ -57,7 +61,10 @@ const Home = () => {
       setCreating(true);
       const response = await authFetch("/api/workspace", {
         method: "POST",
-        body: JSON.stringify({ name: workspaceName, language: selectedLanguage }),
+        body: JSON.stringify({
+          name: workspaceName,
+          language: selectedLanguage,
+        }),
       });
       if (!response.ok) throw new Error("Failed to create workspace");
 
@@ -72,7 +79,8 @@ const Home = () => {
   };
 
   const handleDeleteWorkspace = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this workspace?")) return;
+    if (!window.confirm("Are you sure you want to delete this workspace?"))
+      return;
 
     try {
       const res = await authFetch(`/api/workspace/${id}`, {
@@ -87,7 +95,6 @@ const Home = () => {
   };
 
   const handleViewWorkspace = (id) => {
-    setWorkspaceId(id)
     navigate(`/workspace/${id}`);
   };
 

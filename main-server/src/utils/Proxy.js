@@ -1,16 +1,14 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const BASE_URL = process.env.TARGET_ORIGIN || 'http://localhost:4000';
-
 const actualProxy = async (req, res) => {
   try {
     console.log('Incoming request:', req.method, req.originalUrl);
     
     // Path rewriting logic
     const rem = req.originalUrl.replace('/api/workspace/', '');
+    const Workspace_ID=rem.split('/')[0]
     console.log('Workspace ID:', rem.split('/')[0]);
-    
-    const baseUrl = BASE_URL + '/proxy/runtime-';
-    const targetUrl = baseUrl + rem;
+    const after=rem.replace(Workspace_ID,'')
+    const baseUrl = `http://runtime-${Workspace_ID}:3000`;
+    const targetUrl = baseUrl + after;
     console.log('Target URL:', targetUrl);
     
     // Prepare headers for forwarding

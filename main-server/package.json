@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cd src && nodemon server.js"
+    "dev": "ls && pwd && cd src && nodemon server.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,8 @@
     "mongoose": "^8.17.0",
     "morgan": "^1.10.1",
     "nodemon": "^3.1.10",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "util": "^0.12.5"
   }
 }
