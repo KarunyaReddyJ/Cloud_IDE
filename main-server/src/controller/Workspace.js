@@ -3,7 +3,8 @@ const dockerClient = require('../utils/Docker');
 const workspaceProxy = require('../utils/Proxy');
 const crypto = require('crypto');
 const Runtime = require('../models/Runtime');
-
+const jwt = require('jsonwebtoken')
+const { Readable } =require("stream")
 exports.createWorkspace = async (req, res) => {
   const { language, name } = req.body;
   const user = req.user;
@@ -13,7 +14,7 @@ exports.createWorkspace = async (req, res) => {
   if (!runtime) return res.status(400).json({ error: 'Unsupported language' });
   const imageNameFromDB = runtime.image
   let imageName = imageNameFromDB.replace(/[^\x20-\x7E]/g, '').trim();
-  
+
   if (!imageName.includes(':')) {
     imageName += ':latest';
   }
@@ -24,7 +25,7 @@ exports.createWorkspace = async (req, res) => {
   //res.send(runtime.image)
   const id = crypto.randomBytes(8).toString('hex');
   const serviceName = `runtime-${id}`;
- 
+
   try {
     const image = await dockerClient.getImage(imageName);
     try {
@@ -47,7 +48,7 @@ exports.createWorkspace = async (req, res) => {
     console.error('error while pulling ', imageName, error.message)
   }
 
-   const containerOptions = {
+  const containerOptions = {
     Image: imageName,
     name: serviceName,
     Tty: true,
@@ -59,12 +60,12 @@ exports.createWorkspace = async (req, res) => {
     }
   };
 
-  let tries=5,err=null
-  while(tries>0){
+  let tries = 5, err = null
+  while (tries > 0) {
     try {
       const container = await dockerClient.createContainer(containerOptions);
       await container.start();
-  
+
       await Workspace.create({
         id,
         name,
@@ -77,10 +78,10 @@ exports.createWorkspace = async (req, res) => {
       });
       return res.json({ id, name, createdAt: new Date(), language });
     } catch (error) {
-        tries--;
-        err=error
-      }
-      res.status(500).json({ error: err.message });
+      tries--;
+      err = error
+    }
+    res.status(500).json({ error: err.message });
   }
 
 };
@@ -93,8 +94,8 @@ exports.deleteWorkspace = async (req, res) => {
 
   try {
     const container = dockerClient.getContainer(workspace.serviceName);
-    if(container)
-    await container.stop();
+    if (container)
+      await container.stop();
     await container.remove();
     await workspace.deleteOne();
     res.sendStatus(204);
@@ -110,5 +111,55 @@ exports.getWorkspaceInfo = async (req, res) => {
   if (!workspace) return res.status(404).json({ error: 'Not found' });
   res.json(workspace);
 };
+
+exports.showPreview = async (req, res) => {
+  const { token } = req.query;
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (payload.workspaceId !== req.params.id) {
+      return res.status(403).json({ error: "Invalid workspace" });
+    }
+
+    const targetUrl = `http://runtime-${payload.workspaceId}:10000`;
+    const response = await fetch(targetUrl);
+
+    const nodeStream = Readable.fromWeb(response.body);
+
+    // Copy headers
+    response.headers.forEach((value, key) => {
+      res.setHeader(key, value);
+    });
+
+    // Pipe
+    res.status(response.status);
+    nodeStream.pipe(res);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Proxy error");
+  }
+};
+
+
+exports.generateDynamicPreviewURL = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+
+    const workspace = await Workspace.findOne({ id, user: user.id });
+    if (!workspace) return res.status(404).json({ error: 'Not found' });
+
+
+    const token = jwt.sign({ workspaceId: id, userId: user._id }, process.env.JWT_SECRET, { expiresIn: '15m' })
+    const url = `/api/workspace/${id}/preview?token=${token}`;
+    res.json({ url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Proxy error");
+  }
+};
+
+
 
 exports.proxy = workspaceProxy

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TerminalComponent from "../components/Terminal";
 import FileViewer from "../components/FileViewer";
@@ -7,19 +7,18 @@ import useFileTabsContext from "../hooks/useFileTabsContext";
 import Tab from "../components/mini-components/Tab";
 import useSocket from "../hooks/useSocket";
 import useWorkspaceMeta from "../hooks/useWorkspaceMeta";
+import Preview from "../components/Preview";
+import "./styles/workspace.css"; // <-- New CSS file
 
 const Workspace = () => {
   const { fileTabs, removeTab, activeTab } = useFileTabsContext();
   const { workspaceId, setWorkspaceId } = useWorkspaceMeta();
   const { socket } = useSocket();
   const { id } = useParams();
-
+  const [showPreview, setShowPreview] = useState(false);
+  
   useEffect(() => {
     setWorkspaceId(id);
-
-    console.log(`${id}: id`);
-    console.log("workspace:join", { workspaceId });
-
     socket.emit("workspace:join", { workspaceId });
 
     return () => {
@@ -29,38 +28,16 @@ const Workspace = () => {
   }, [id, setWorkspaceId, socket, workspaceId]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        overflow: "hidden",
-      }}
-    >
+    <div className="workspace-container">
       {/* Top section: File viewer + Editor */}
-      <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <div style={{ flex: "0 0 250px", borderRight: "1px solid #ccc" }}>
+      <div className="workspace-main">
+        <div className="workspace-fileviewer">
           <FileViewer />
         </div>
 
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
+        <div className="workspace-editor">
           {/* Tabs */}
-          <div
-            style={{
-              display: "flex",
-              background: "#f5f5f5",
-              borderBottom: "1px solid #ccc",
-              overflowX: "auto",
-              whiteSpace: "nowrap",
-            }}
-          >
+          <div className="workspace-tabs">
             {fileTabs.map((fileTab) => (
               <Tab
                 key={fileTab.path}
@@ -70,15 +47,28 @@ const Workspace = () => {
             ))}
           </div>
 
-          {/* Code editor */}
-          <div style={{ flex: 1, overflow: "auto" }}>
-            <CodeEditor activeTab={activeTab} />
+          <div className="workspace-toolbar">
+            <button onClick={() => setShowPreview((p) => !p)}>
+              {showPreview ? "Hide Preview" : "Show Preview"}
+            </button>
+          </div>
+
+          {/* Code editor + Preview */}
+          <div className="workspace-editor-main">
+            <div className="workspace-code">
+              <CodeEditor activeTab={activeTab} />
+            </div>
+            {showPreview && (
+              <div className="workspace-preview">
+                <Preview id={id} />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Terminal */}
-      <div style={{ flex: "0 0 200px", borderTop: "1px solid #ccc" }}>
+      <div className="workspace-terminal">
         <TerminalComponent />
       </div>
     </div>

@@ -6,6 +6,8 @@ const proxy = require('../utils/Proxy');
 const testMiddleware = require('../middleware/test.js');
 // Auth protected routes
 
+router.get('/:id/preview', workspaceController.showPreview)
+
 router.use(authMiddleware);
 
 // Workspace lifecycle
@@ -13,8 +15,9 @@ router.post('/', workspaceController.createWorkspace);           // POST /api/wo
 router.delete('/:id', workspaceController.deleteWorkspace);     // DELETE /api/workspace/:id
 router.get('/:id', workspaceController.getWorkspaceInfo);       // GET /api/workspace/:id
 
+router.get('/:id/preview-url', workspaceController.generateDynamicPreviewURL)
 
-router.use('/:id/*path',testMiddleware,proxy)
+router.use('/:id/*path', testMiddleware, proxy)
 
 // // File operations (via proxy)
 // router.get('/:id/file', workspaceController.proxy);             // GET file tree or specific file

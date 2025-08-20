@@ -1,0 +1,81 @@
+.workspace-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #fdfdfd;
+}
+
+.workspace-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.workspace-fileviewer {
+  flex: 0 0 250px;
+  border-right: 1px solid #e0e0e0;
+  background: #fafafa;
+}
+
+.workspace-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.workspace-tabs {
+  display: flex;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0.3rem 0.5rem;
+}
+
+.workspace-toolbar {
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  text-align: right;
+}
+
+.workspace-toolbar button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background: #4a90e2;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.workspace-toolbar button:hover {
+  background: #357ab8;
+}
+
+.workspace-editor-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.workspace-code,
+.workspace-preview {
+  flex: 1;
+  overflow: auto;
+}
+
+.workspace-preview {
+  border-left: 1px solid #eee;
+  background: #fff;
+}
+
+.workspace-terminal {
+  flex: 0 0 200px;
+  border-top: 1px solid #ccc;
+  background: #1e1e1e;
+  color: #f1f1f1;
+}
