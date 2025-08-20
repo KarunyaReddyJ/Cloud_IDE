@@ -48,7 +48,7 @@ How to securely serve workspace previews when the request is made by an iframe (
 
 #### Illustration
 
-![Fetch-Preview-URL](./architecture/Fetch-Preview-URL.png)
+![Fetch-Preview-URL](../architecture/Fetch-Preview-URL.png)
 
 #### Sequence
 
@@ -67,7 +67,7 @@ How to securely serve workspace previews when the request is made by an iframe (
 
 #### Illustration
 
-![Preview](./architecture/Preview.png)
+![Preview](../architecture/Preview.png)
 
 - Security:
  Only authenticated users can fetch signed preview URLs. The token's expiry prevents re-use.
