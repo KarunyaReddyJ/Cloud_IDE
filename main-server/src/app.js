@@ -5,7 +5,6 @@ const workspacesRoutes = require('./routes/workspaces');
 const runtimeRoutes = require('./routes/runtime');
 const cors = require('cors')
 const morgan = require('morgan');
-const loggerMiddleware = require('./middleware/logger');
 
 
 const app = express();

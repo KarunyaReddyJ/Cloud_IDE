@@ -13,9 +13,9 @@ export default function FileTabsProvider({ children }) {
   const { socket, loading: socketLoading } = useSocket();
   const { workspaceId } = useWorkspaceMeta();
 
-   useEffect(()=>{
-    console.log('loaded', { socket, loading: socketLoading })
-  },[])
+  useEffect(() => {
+    console.log("loaded", { socket, loading: socketLoading });
+  }, []);
   // Fetch file content when active tab changes
   useEffect(() => {
     if (!activeTab || !workspaceId) return;
@@ -55,9 +55,7 @@ export default function FileTabsProvider({ children }) {
     socket.on("file:write:success", ({ path }) =>
       console.log(`✅ Saved ${path}`)
     );
-    socket.on("file:error", (err) =>
-      console.error("❌ File error:", err.message)
-    );
+    socket.on("file:error", (err) => console.error("❌ File error:", err));
     return () => {
       socket.off("file:write:success");
       socket.off("file:error");

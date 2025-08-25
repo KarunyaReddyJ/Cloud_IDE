@@ -1,7 +1,8 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import useFileContext from "../hooks/useFileContext";
-import useWorkspaceMetaContext from '../hooks/useWorkspaceMeta'
+import useWorkspaceMetaContext from "../hooks/useWorkspaceMeta";
 import useFileTabsContext from "../hooks/useFileTabsContext";
+import useWorkspaceMeta from "../hooks/useWorkspaceMeta";
 const fileIcons = {
   js: "🟨",
   jsx: "🟦",
@@ -25,15 +26,13 @@ function getFileIcon(name) {
 
 const FileViewer = () => {
   const { fileTree, loading } = useFileContext();
-  const {workspaceId} = useWorkspaceMetaContext()
+  const { workspaceId } = useWorkspaceMetaContext();
   const [contextMenu, setContextMenu] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
 
   useEffect(() => {
-    console.log('mounted fileviewer',workspaceId,loading)
-    return () => {
-      
-    };
+    console.log("mounted fileviewer", workspaceId, loading);
+    return () => {};
   }, []);
   const handleMenuAction = (action) => {
     if (!selectedNode) return;
@@ -70,11 +69,8 @@ const FileViewer = () => {
   }
 
   return (
-    <div
-      className="fileviewer"
-      onClick={() => setContextMenu(null)}
-    >
-        { console.log(fileTree) }
+    <div className="fileviewer" onClick={() => setContextMenu(null)}>
+      {console.log(fileTree)}
       {fileTree?.map((fileNode) => (
         <RecursiveComponent
           key={fileNode.id}
@@ -91,10 +87,11 @@ const FileViewer = () => {
 export default FileViewer;
 
 const RecursiveComponent = ({ node, setContextMenu, setSelectedNode }) => {
+  const { workspaceId } = useWorkspaceMeta();
   const { addTab } = useFileTabsContext();
   const [opened, setOpened] = useState(false);
   const { name, id, children = [], isDir } = node;
-  const path = id?.split("/app/user/")[1] || "path";
+  const path = id?.split(`runtime-${workspaceId}/`)[1] || "path";
   const fullPath = path === "" ? name : path;
 
   const handleContextMenu = (e) => {
@@ -114,7 +111,6 @@ const RecursiveComponent = ({ node, setContextMenu, setSelectedNode }) => {
 
   return (
     <div className="file-node">
-    
       <div
         className={`file-item ${isDir ? "dir" : "file"}`}
         onClick={handleClick}

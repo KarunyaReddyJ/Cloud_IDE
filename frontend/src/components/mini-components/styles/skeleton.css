@@ -1,0 +1,79 @@
+.skeleton-ide {
+  display: grid;
+  grid-template-areas:
+    "sidebar editor"
+    "sidebar terminal";
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 1fr 200px;
+  height: 100vh;
+  gap: 8px;
+  padding: 8px;
+  background: #1e1e1e;
+}
+
+.skeleton-sidebar {
+  grid-area: sidebar;
+  background: #2b2b2b;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 6px;
+}
+
+.skeleton-editor {
+  grid-area: editor;
+  background: #2b2b2b;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 6px;
+}
+
+.skeleton-terminal {
+  grid-area: terminal;
+  background: #2b2b2b;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 6px;
+}
+
+.skeleton-item  {
+  background: linear-gradient(90deg, #3a3a3a 25%, #4a4a4a 50%, #3a3a3a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-line {
+  background: linear-gradient(90deg, #3a3a3a 25%, #4a4a4a 50%, #3a3a3a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-item {
+  height: 20px;
+  width: 80%;
+}
+
+.skeleton-line {
+  height: 14px;
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 40%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET;
 
 function adminMiddleware(req, res, next) {
     try {
